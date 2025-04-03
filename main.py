@@ -1,4 +1,5 @@
 from enum import Enum, auto
+import copy
 
 # Перечисление цветов, используемых для фигур.
 class Color(Enum):
@@ -568,6 +569,7 @@ class Game:
         """
         self.board = Board(game_type)
         self.turn = Color.WHITE
+        self.history = []
 
     def playing(self):
         """
@@ -584,7 +586,10 @@ class Game:
                 print("Ходят черные! Общий номер хода -", number)
                       
             move = input("Введите координаты фигуры и желаймой позиции (Сначала буква, потом цифра): ")
-            if self.make_move(move):
+            if move == "UNDO":
+                if self.undo_move():
+                    print("Доска возвращена на 1 ход назад.")
+            elif self.make_move(move):
                 if self.turn == Color.WHITE:
                     self.turn = Color.BLACK
                     number += 1
@@ -610,11 +615,20 @@ class Game:
             
             piece = self.board.get_piece(x1, y1)
             if piece and piece.color == self.turn and piece.is_move_correct((x1, y1), (x2, y2), self.board):
+                self.history.append(copy.deepcopy(self.board.board))
                 self.board.move_piece((x1, y1), (x2, y2))
                 return True
             return False
         except:
             return False
+        
+
+    def undo_move(self):
+        if not self.history: # Ходов нет
+            return False
+        last_board = self.history.pop()
+        self.board.board = last_board
+        return True
 
     def cut(self, pos):
         """
