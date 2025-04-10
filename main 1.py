@@ -586,9 +586,9 @@ class Game:
                 print("Ходят черные! Общий номер хода -", number)
                       
             move = input("Введите координаты фигуры и желаймой позиции (Сначала буква, потом цифра): ")
-            if move[0] == "U":
+            if move[0].lower() == "u":
                 if self.undo_move(int(move.split()[1])):
-                    print("Доска возвращена на 1 ход назад.")
+                    print("Доска возвращена на", move.split()[1],"ход назад.")
             elif self.make_move(move):
                 if self.turn == Color.WHITE:
                     self.turn = Color.BLACK
